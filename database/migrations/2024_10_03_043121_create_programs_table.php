@@ -9,16 +9,16 @@ class CreateProgramsTable extends Migration
     public function up()
     {
         Schema::create('programs', function (Blueprint $table) {
-            // UUID sebagai primary key
+            // Menggunakan UUID sebagai primary key
             $table->uuid('id')->primary();
             
-            // Kolom nama program
+            // Nama program
             $table->string('nama_program');
             
-            // Kolom status (program, subprogram, atau kegiatan)
+            // Status (program, subprogram, atau kegiatan)
             $table->enum('status', ['program', 'subprogram', 'kegiatan'])->default('program');
             
-            // Timestamps
+            // Timestamp untuk created_at dan updated_at
             $table->timestamps();
         });
     }

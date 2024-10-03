@@ -12,14 +12,14 @@ class CreateRekeningTable extends Migration
             // UUID sebagai primary key
             $table->uuid('id')->primary();
             
-            // Kolom nomor rekening
+            // Kolom nomor rekening yang unik
             $table->string('no_rek')->unique();
             
-            // Foreign key ke tabel programs
+            // Foreign key yang terhubung ke tabel programs
             $table->uuid('program_id');
             $table->foreign('program_id')->references('id')->on('programs')->onDelete('cascade');
             
-            // Timestamps
+            // Timestamps untuk created_at dan updated_at
             $table->timestamps();
         });
     }

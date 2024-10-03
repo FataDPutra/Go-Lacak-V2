@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProgramController;
 use Inertia\Inertia;
 
 /*
@@ -34,5 +35,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+// Route untuk menampilkan daftar program
+Route::get('/programs', [ProgramController::class, 'index'])->name('programs.index');
+
+// Route untuk menyimpan atau memperbarui program
+Route::post('/programs', [ProgramController::class, 'storeOrUpdate'])->name('programs.store');
+Route::put('/programs/{id}', [ProgramController::class, 'storeOrUpdate'])->name('programs.update');
+
+// Route untuk menghapus program
+Route::delete('/programs/{id}', [ProgramController::class, 'destroy'])->name('programs.destroy');
+
+
+
+
 
 require __DIR__.'/auth.php';
