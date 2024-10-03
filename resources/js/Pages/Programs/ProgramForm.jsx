@@ -21,9 +21,12 @@ const ProgramForm = ({ existingProgram, resetForm }) => {
         const data = {
             nama_program: namaProgram,
             status: status,
-            no_rek: noRek,
         };
-        console.log("Data yang dikirim:", data); // Tambahkan log ini untuk memeriksa data yang dikirim
+
+        // Hanya sertakan no_rek jika diubah
+        if (noRek !== "" && noRek !== existingProgram?.rekenings?.[0]?.no_rek) {
+            data.no_rek = noRek;
+        }
 
         if (existingProgram) {
             Inertia.put(`/programs/${existingProgram.id}`, data);
@@ -65,7 +68,6 @@ const ProgramForm = ({ existingProgram, resetForm }) => {
                     id="no_rek"
                     value={noRek}
                     onChange={(e) => setNoRek(e.target.value)}
-                    required
                 />
             </div>
 

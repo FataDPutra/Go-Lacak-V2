@@ -19,38 +19,42 @@ class ProgramController extends Controller
     // Menyimpan data program baru atau mengedit data program
 public function storeOrUpdate(Request $request, $id = null)
 {
-    // Validasi input
+    // Validasi input untuk program
     $request->validate([
         'nama_program' => 'required|string|max:255',
         'status' => 'required|in:program,subprogram,kegiatan',
-        'no_rek' => 'required|string|max:255|unique:rekening,no_rek,' . ($id ? $id : 'NULL'),
+        'no_rek' => $id ? 'nullable|string|max:255|unique:rekening,no_rek,' . $id : 'required|string|max:255|unique:rekening,no_rek',
     ]);
 
-    \Log::info('Data yang diterima di backend:', $request->all()); // Logging data input
+    \Log::info('Data yang diterima di backend:', $request->all());
 
     DB::beginTransaction();
     try {
         if ($id) {
-            // Jika ada ID, berarti ini proses update
+            // Proses update
             $program = Program::findOrFail($id);
 
-            // Update data program
+            // Update nama program dan status
             $program->update([
                 'nama_program' => $request->nama_program,
                 'status' => $request->status,
             ]);
 
-            \Log::info('Data program yang diperbarui:', $program->toArray()); // Tambahkan log untuk melihat update
+            \Log::info('Program berhasil diperbarui:', $program->toArray());
 
-            // Update rekening terkait
-            if ($program->rekenings->isNotEmpty()) {
-                $program->rekenings[0]->update(['no_rek' => $request->no_rek]);
-            } else {
-                $program->rekenings()->create(['no_rek' => $request->no_rek]);
+            // Update rekening hanya jika ada perubahan no_rek
+            if ($request->filled('no_rek')) {
+                if ($program->rekenings->isNotEmpty()) {
+                    $program->rekenings[0]->update(['no_rek' => $request->no_rek]);
+                } else {
+                    $program->rekenings()->create(['no_rek' => $request->no_rek]);
+                }
+                \Log::info('Rekening berhasil diperbarui atau dibuat.');
             }
+
             $message = 'Program berhasil diperbarui!';
         } else {
-            // Jika tidak ada ID, berarti ini proses create
+            // Proses create
             $program = Program::create([
                 'nama_program' => $request->nama_program,
                 'status' => $request->status,
@@ -60,17 +64,21 @@ public function storeOrUpdate(Request $request, $id = null)
             $program->rekenings()->create([
                 'no_rek' => $request->no_rek,
             ]);
-            $message = 'Program berhasil ditambahkan!';
+
+            $message = 'Program dan rekening berhasil ditambahkan!';
         }
 
         DB::commit();
         return redirect()->route('programs.index')->with('success', $message);
     } catch (\Exception $e) {
-        \Log::error('Error menyimpan program:', ['message' => $e->getMessage()]); // Logging error
+        \Log::error('Error saat menyimpan program:', ['message' => $e->getMessage()]);
         DB::rollBack();
         return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
 }
+
+
+
 
 
     // Menghapus program dan rekening terkait

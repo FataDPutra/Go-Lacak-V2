@@ -36,16 +36,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
 // Route untuk menampilkan daftar program
 Route::get('/programs', [ProgramController::class, 'index'])->name('programs.index');
 
-// Route untuk menyimpan atau memperbarui program
+// Route untuk menyimpan program baru
 Route::post('/programs', [ProgramController::class, 'storeOrUpdate'])->name('programs.store');
+
+// Route untuk memperbarui program
 Route::put('/programs/{id}', [ProgramController::class, 'storeOrUpdate'])->name('programs.update');
 
 // Route untuk menghapus program
 Route::delete('/programs/{id}', [ProgramController::class, 'destroy'])->name('programs.destroy');
+
 
 
 
